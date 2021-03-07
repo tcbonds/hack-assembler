@@ -1,0 +1,10 @@
+.DS_Store
+.ipynb_checkpoints
+*.hack
+*.asm
+add/
+max/
+pong/
+rect/
+*.ipynb
+__pycache__/
