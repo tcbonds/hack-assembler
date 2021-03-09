@@ -73,7 +73,7 @@ class Code:
 
 
 
-
-code = Code()
-print(code.jump(None))
+if __name__ == '__main__':
+	code = Code()
+	print(code.jump(None))
 

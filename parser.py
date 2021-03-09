@@ -7,50 +7,41 @@ class Parser:
 			for line in assembly_code:
 				self.line_list.append(line)
 
-		self.clean()
-
-		self.current_line_ix = 0
-		self.current_line = self.line_list[self.current_line_ix]
+		self.current_line_ix = None
+		self.current_line = None
 		self.line_total = len(self.line_list)
-
-	def clean(self):
-		print('Before', self.line_list, '\n')
-		clean_line_list = []
-		for line in self.line_list:
-			if '//' not in line and '\n' != line:
-				line = line.replace('\n','')
-				line = line.replace(' ','')
-				line = line.replace('\r','')
-				print(r"{}".format(line))
-				clean_line_list.append(line)
-		self.line_list = clean_line_list
-		print('After',self.line_list)
 
 	def hasMoreCommands(self):
-		self.line_total = len(self.line_list)
-		return self.current_line_ix < self.line_total
-
-	# def clean(self):
-	# 	while '//' in self.current_line or '\n' == self.current_line:
-	# 		self.line_total = len(self.line_list)
-	# 		if self.current_line_ix < self.line_total-1:
-	# 			del self.line_list[self.current_line_ix]
-	# 			self.current_line = self.line_list[self.current_line_ix]
-	# 		else:
-	# 			break
-	# 	self.current_line = self.current_line.replace(' ','').replace('\n','')
-	# 	print('current_line', self.current_line)
-	# 	print('current_line_ix', self.current_line_ix)
+		if self.current_line_ix != None:
+			return self.current_line_ix < self.line_total - 1
+		else:
+			return True # Parser has not begun parsing hence current_line_ix = None
 
 	def advance(self):
-		self.current_line_ix += 1
-		try:
-			self.current_line = self.line_list[self.current_line_ix]
-		except:
-			pass
-		
+		if self.current_line_ix != None:
+			self.current_line_ix += 1
+		else:
+			self.current_line_ix = 0
+
+		self.current_line = self.line_list[self.current_line_ix]
+
+		if '//' == self.current_line[:2] or '\n' == self.current_line :
+			self.advance()
+		else:
+			comment_ix = self.current_line.find('//')
+			if comment_ix != -1:
+				self.current_line = self.current_line[:comment_ix]
+			for char in ['\n','\r',' ']:
+				self.current_line = self.current_line.replace(char, '')
+			print(r"{}".format(self.current_line))
+
 	def commandType(self):
-		print('CURRENT LINE', self.current_line)
+		try:
+			self.current_line 
+		except:
+			self.current_line = self.line_list[0]
+
+		print('CURRENT LINE', self.current_line)	
 		if '@' in self.current_line:
 			return 'A_COMMAND'
 		elif '(' in self.current_line and ')' in self.current_line:
